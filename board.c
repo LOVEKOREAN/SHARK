@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "board.h"
-#define N_BOARD         15
 //매크로 써서 칸 사이즈 만들기 
 #define N_COINPOS       12
 #define MAX_COIN         4 
+#define MAX_SHARKSTEP    6  //난이도에 영향 
+#define SHARK_INITPOS   -4
 
 static int board_status[N_BOARD]; 
 static int board_coin[N_BOARD]; //보드에 있는 코인 
@@ -20,21 +21,22 @@ int board_initBoard(void)
        board_coin[i]=0;
     }
     
-    for(i=0;i<N_BOARD;i++);
+    board_sharkPosition=SHARK_INITPOS;
+    
+    for(i=0;i<N_COINPOS;i++);
     {
-                       int flag =0;
-                       while(flag==0)
-                       {
-                          int allocPos = rand()%N_BOARD;
-                          if (board_coin[allocPos] ==0)
-                          {
-                             board_coin[allocPos]=rand()%MAX_COIN+1;
-                             flag =1;
-                          }                       
-                        }
-                       return 0;
-                       
+        int flag =0;
+        while(flag==0)
+        {
+          int allocPos = rand()%N_BOARD;
+          if (board_coin[allocPos] ==0)
+          {
+             board_coin[allocPos]=rand()%MAX_COIN+1;
+             flag =1;
+          }                       
+        }             
      }         
+     return 0;
 }
 int board_printBoardStatus(void)
 {
@@ -51,7 +53,13 @@ int board_printBoardStatus(void)
      }
      printf("|\n");
      printf("------------------------------------------------------\n");
+     return 0;
 }
+int board_getBoardStatus(int pos)
+{
+  return board_status[pos];
+}
+
 int board_getBoardCoin(int pos)
 {
     int coin = board_coin[pos];
@@ -61,8 +69,17 @@ int board_getBoardCoin(int pos)
 }
 int board_getSharkPosition(void);
 
-int board_stepShark(void);
-int board_getBoardStatus(int pos)
+int board_stepShark(void)
 {
-   return board_status[pos];
+       int step=rand()%MAX_SHARKSTEP+1;
+       int i;
+       for(i=+1;i<=board_sharkPosition+step;i++)
+       {
+          if(i>=0 && i<N_BOARD)
+             board_status[i]=BOARDSTATUS_NOK;     
+       }
+       board_sharkPosition +=step;
+       return board_sharkPosition;
 }
+
+
